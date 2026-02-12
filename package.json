@@ -1,0 +1,34 @@
+{
+  "name": "hoc-utils",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "check": "vue-tsc --build --force"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "@vee-validate/rules": "^4.12.6",
+    "@vueuse/core": "^10.9.0",
+    "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
+    "roboto-fontface": "^0.10.0",
+    "vee-validate": "^4.12.6",
+    "vite-plugin-vuetify": "^2.0.3",
+    "vue": "^3.4.21",
+    "vue-router": "^4.4.0",
+    "vuetify": "^3.5.13",
+    "webfontloader": "^1.6.28"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/webfontloader": "^1.6.38",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "eslint-plugin-vue": "^9.24.0",
+    "sass": "^1.72.0",
+    "typescript": "^5.4.2",
+    "vite": "^5.3.3",
+    "vue-tsc": "^2.0.26"
+  }
+}

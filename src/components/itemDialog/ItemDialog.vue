@@ -16,7 +16,8 @@
       </v-card-title>
       <v-divider />
       <v-card-text class="pt-4">
-        <v-row>
+        <div class="text-subtitle-2">Basic info</div>
+        <v-row class="mt-1">
           <v-col cols="6">
             <v-text-field
               v-model="itemStore.formData.id"
@@ -35,8 +36,6 @@
               label="Name"
             />
           </v-col>
-        </v-row>
-        <v-row>
           <v-col cols="6">
             <v-select
               v-model="itemStore.formData.rarity"
@@ -84,6 +83,54 @@
               hide-details="auto"
               label="Tag"
               :items="tagItems"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-textarea
+              v-model="itemStore.formData.description"
+              density="compact"
+              placeholder="Enter description"
+              hide-details="auto"
+              label="Description"
+            />
+          </v-col>
+        </v-row>
+        <div class="text-subtitle-2 mt-4">Weapon info</div>
+        <v-row class="mt-1">
+          <v-col cols="6">
+            <v-text-field
+              v-model="itemStore.formData.minDamage"
+              density="compact"
+              placeholder="Enter min damage"
+              hide-details="auto"
+              label="Min damage"
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="itemStore.formData.maxDamage"
+              density="compact"
+              placeholder="Enter max damage"
+              hide-details="auto"
+              label="Max damage"
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="itemStore.formData.projectileScale"
+              density="compact"
+              placeholder="Enter scale"
+              hide-details="auto"
+              label="Projectile scale"
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="itemStore.formData.range"
+              density="compact"
+              placeholder="Enter range"
+              hide-details="auto"
+              label="Range"
             />
           </v-col>
         </v-row>

@@ -1,11 +1,13 @@
 import { ItemModel } from "@/models/common";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 
 export const useItemStore = defineStore("item", () => {
   const loading = ref(false);
   const dialog = ref(false);
   const activeItem = ref<ItemModel | null>(null);
+
+  const formData = reactive<ItemModel>({} as ItemModel);
 
   const setLoading = (data: boolean) => {
     loading.value = data;
@@ -13,6 +15,7 @@ export const useItemStore = defineStore("item", () => {
 
   const editItem = (item: ItemModel) => {
     activeItem.value = item;
+    Object.assign(formData, { ...item });
     dialog.value = true;
   };
 
@@ -25,6 +28,7 @@ export const useItemStore = defineStore("item", () => {
     dialog,
     loading,
     activeItem,
+    formData,
     closeDialog,
     editItem,
     setLoading

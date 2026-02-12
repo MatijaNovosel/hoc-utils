@@ -34,7 +34,7 @@
       :items="items"
       item-key="id"
     >
-      <template v-slot:item.actions="row">
+      <template #item.actions="row">
         <v-btn
           variant="text"
           rounded="0"
@@ -50,15 +50,30 @@
           Delete
         </v-btn>
       </template>
-      <template v-slot:item.tag="{ value }">
+      <template #item.tag="{ value }">
         {{ ItemTagName[value] }}
+      </template>
+      <template #item.rarity="{ value }">
+        <div class="d-flex">
+          <v-icon
+            :style="{
+              color: ItemRarityData[value].color
+            }"
+            class="mr-2 rarity-circle"
+          >
+            mdi-circle
+          </v-icon>
+          <div>
+            {{ ItemRarityData[value].name }}
+          </div>
+        </div>
       </template>
     </v-data-table>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ItemTagName } from "@/constants/game";
+import { ItemRarityData, ItemTagName } from "@/constants/game";
 import { ItemModel } from "@/models/common";
 import { useItemStore } from "@/store/item";
 import { computed, ref, watch } from "vue";
@@ -69,13 +84,16 @@ const inputFile = ref<File | null>(null);
 const outputPath = ref<string>("");
 const items = ref<ItemModel[]>([]);
 
-const headers: any = [
-  { title: "ID", align: "start", key: "id" },
-  { title: "Name", align: "start", key: "name" },
-  { title: "Description", align: "start", key: "description", maxWidth: "200px" },
-  { title: "Tag", align: "start", key: "tag" },
-  { title: "Actions", align: "center", key: "actions" }
-];
+const headers: any = computed(() => {
+  let baseHeaders = [
+    { title: "ID", align: "start", key: "id" },
+    { title: "Name", align: "start", key: "name" },
+    { title: "Description", align: "start", key: "description", maxWidth: "200px" },
+    { title: "Tag", align: "start", key: "tag" }
+  ];
+
+  return [...baseHeaders, { title: "Actions", align: "center", key: "actions" }];
+});
 
 const selectOutputPath = async () => {
   //
@@ -108,5 +126,10 @@ watch(inputFile, async (file) => {
 <style lang="scss" scoped>
 .tabs-content {
   flex-grow: 1;
+}
+
+.rarity-circle {
+  border-radius: 100%;
+  box-shadow: #00000026 1.95px 1.95px 2.6px;
 }
 </style>

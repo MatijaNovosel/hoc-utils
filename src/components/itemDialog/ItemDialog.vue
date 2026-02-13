@@ -201,6 +201,15 @@
                   label="Projectile degree"
                 />
               </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="itemStore.formData.impactColor"
+                  density="compact"
+                  placeholder="Enter impact color"
+                  hide-details="auto"
+                  label="Impact color"
+                />
+              </v-col>
             </v-row>
           </v-col>
         </v-row>

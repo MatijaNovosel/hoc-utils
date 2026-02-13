@@ -24,14 +24,23 @@
       <div>
         {{ activeItemFileName }}
       </div>
-      <v-btn
-        :disabled="buttonShouldBeDisabled"
-        rounded="6"
-        class="text-white text-capitalize"
-        color="orange"
-      >
-        Save
-      </v-btn>
+      <div>
+        <v-btn
+          rounded="6"
+          class="text-white text-capitalize mr-3"
+          color="green"
+        >
+          New item
+        </v-btn>
+        <v-btn
+          :disabled="buttonShouldBeDisabled"
+          rounded="6"
+          class="text-white text-capitalize"
+          color="orange"
+        >
+          Save
+        </v-btn>
+      </div>
     </div>
     <v-data-table
       v-if="items.length"
@@ -63,7 +72,18 @@
         {{ ItemTagName[value] }}
       </template>
       <template #item.stats="{ value }">
-        {{ value }}
+        <div class="stat-ctr">
+          <div
+            class="stat-ctr-item"
+            v-for="(stat, i) in value.filter((x: number) => x != 0)"
+            :key="i"
+            :style="{
+              backgroundColor: StatsData[i as number].color
+            }"
+          >
+            {{ stat }}
+          </div>
+        </div>
       </template>
       <template #item.rarity="{ value }">
         <v-icon
@@ -112,6 +132,7 @@ import {
   ItemRarityData,
   ItemTagName,
   projectileCoordinates,
+  StatsData,
   weaponItemCoordinates
 } from "@/constants/game";
 import { ItemModel } from "@/models/common";
@@ -225,5 +246,25 @@ watch(inputFile, async (file) => {
 .item-table {
   border: 1px solid #80808050;
   border-radius: 8px;
+}
+
+.stat-ctr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-items: center;
+  gap: 4px;
+  color: white;
+  text-align: center;
+
+  &-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    font-weight: bold;
+  }
 }
 </style>

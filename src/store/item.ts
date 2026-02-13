@@ -15,7 +15,7 @@ export const useItemStore = defineStore("item", () => {
 
   const editItem = (item: ItemModel) => {
     activeItem.value = item;
-    Object.assign(formData, { ...item });
+    Object.assign(formData, { ...item, stats: [...item.stats!] });
     dialog.value = true;
   };
 

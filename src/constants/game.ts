@@ -16,6 +16,15 @@ export const ItemRarityEnum = {
   Legendary: 5
 };
 
+export const Stats = {
+  MGT: 0,
+  ARM: 1,
+  WIS: 2,
+  STR: 3,
+  AGI: 4,
+  SWF: 5
+};
+
 export const ItemTagName = {
   [ItemTagEnum.None]: "None",
   [ItemTagEnum.Weapon]: "Weapon",
@@ -32,6 +41,15 @@ export const ItemRarityData: Record<number, { color: string; name: string }> = {
   [ItemRarityEnum.Rare]: { color: "#1e90ff", name: "Rare" },
   [ItemRarityEnum.Epic]: { color: "#a020f0", name: "Epic" },
   [ItemRarityEnum.Legendary]: { color: "#ff8b00", name: "Legendary" }
+};
+
+export const StatsData: Record<number, { color: string }> = {
+  [Stats.MGT]: { color: "#b04183" },
+  [Stats.ARM]: { color: "#7d6d6d" },
+  [Stats.WIS]: { color: "#6488c3" },
+  [Stats.STR]: { color: "#c54646" },
+  [Stats.AGI]: { color: "#dd8457" },
+  [Stats.SWF]: { color: "#3bab3b" }
 };
 
 export const weaponItemCoordinates: Record<number, { x: number; y: number }> = {

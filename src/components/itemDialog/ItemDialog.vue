@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    width="1000"
+    width="70%"
     persistent
     :model-value="itemStore.dialog"
   >
@@ -78,6 +78,7 @@
           <v-col cols="6">
             <v-select
               v-model="itemStore.formData.tag"
+              disabled
               density="compact"
               placeholder="Select tag"
               hide-details="auto"
@@ -97,7 +98,7 @@
         </v-row>
         <div class="text-subtitle-2 mt-4">Weapon info</div>
         <v-row class="mt-1">
-          <v-col cols="6">
+          <v-col cols="4">
             <v-text-field
               v-model="itemStore.formData.minDamage"
               density="compact"
@@ -106,7 +107,7 @@
               label="Min damage"
             />
           </v-col>
-          <v-col cols="6">
+          <v-col cols="4">
             <v-text-field
               v-model="itemStore.formData.maxDamage"
               density="compact"
@@ -115,7 +116,7 @@
               label="Max damage"
             />
           </v-col>
-          <v-col cols="6">
+          <v-col cols="4">
             <v-text-field
               v-model="itemStore.formData.projectileScale"
               density="compact"
@@ -124,13 +125,79 @@
               label="Projectile scale"
             />
           </v-col>
-          <v-col cols="6">
+          <v-col cols="4">
             <v-text-field
               v-model="itemStore.formData.range"
               density="compact"
               placeholder="Enter range"
               hide-details="auto"
               label="Range"
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              v-model="itemStore.formData.projectileDegree"
+              density="compact"
+              placeholder="Enter projectile degree"
+              hide-details="auto"
+              label="Projectile degree"
+            />
+          </v-col>
+        </v-row>
+        <div class="text-subtitle-2 mt-4">Stats</div>
+        <v-row class="mt-1">
+          <v-col cols="2">
+            <v-text-field
+              v-model="itemStore.formData.stats![0]"
+              density="compact"
+              placeholder="Enter MGT"
+              hide-details="auto"
+              label="MGT"
+            />
+          </v-col>
+          <v-col cols="2">
+            <v-text-field
+              v-model="itemStore.formData.stats![1]"
+              density="compact"
+              placeholder="Enter ARM"
+              hide-details="auto"
+              label="ARM"
+            />
+          </v-col>
+          <v-col cols="2">
+            <v-text-field
+              v-model="itemStore.formData.stats![2]"
+              density="compact"
+              placeholder="Enter WIS"
+              hide-details="auto"
+              label="WIS"
+            />
+          </v-col>
+          <v-col cols="2">
+            <v-text-field
+              v-model="itemStore.formData.stats![3]"
+              density="compact"
+              placeholder="Enter STR"
+              hide-details="auto"
+              label="STR"
+            />
+          </v-col>
+          <v-col cols="2">
+            <v-text-field
+              v-model="itemStore.formData.stats![4]"
+              density="compact"
+              placeholder="Enter AGI"
+              hide-details="auto"
+              label="AGI"
+            />
+          </v-col>
+          <v-col cols="2">
+            <v-text-field
+              v-model="itemStore.formData.stats![5]"
+              density="compact"
+              placeholder="Enter SWF"
+              hide-details="auto"
+              label="SWF"
             />
           </v-col>
         </v-row>

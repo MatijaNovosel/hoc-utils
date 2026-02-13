@@ -18,73 +18,103 @@
       <v-card-text class="pt-4">
         <div class="text-subtitle-2">Basic info</div>
         <v-row class="mt-1">
-          <v-col cols="6">
-            <v-text-field
-              v-model="itemStore.formData.id"
-              density="compact"
-              placeholder="Enter id"
-              hide-details="auto"
-              label="ID"
-            />
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              v-model="itemStore.formData.name"
-              density="compact"
-              placeholder="Enter name"
-              hide-details="auto"
-              label="Name"
-            />
-          </v-col>
-          <v-col cols="6">
-            <v-select
-              v-model="itemStore.formData.rarity"
-              density="compact"
-              placeholder="Select rarity"
-              hide-details="auto"
-              label="Rarity"
-              :items="rarityItems"
+          <v-col
+            cols="2"
+            align="center"
+            class="sprite-selection"
+          >
+            <div
+              v-ripple
+              class="sprite"
+              :style="getSpriteStyle(itemStore.activeItem?.spritePath)"
             >
-              <template v-slot:item="{ props: itemProps, item }">
-                <v-list-item v-bind="itemProps">
-                  <template #prepend>
-                    <v-icon
-                      :style="{
-                        color: ItemRarityData[item.raw.value].color
-                      }"
-                      class="mr-2 rarity-circle"
-                    >
-                      mdi-circle
-                    </v-icon>
-                  </template>
-                </v-list-item>
-              </template>
-              <template v-slot:selection="{ item }">
-                <div class="d-flex items-center align-center justify-center">
-                  <v-icon
-                    size="15px"
-                    :style="{
-                      color: ItemRarityData[item.raw.value].color
-                    }"
-                    class="mr-2 rarity-circle"
-                  >
-                    mdi-circle
-                  </v-icon>
-                  {{ item.raw.title }}
-                </div>
-              </template>
-            </v-select>
+              <v-menu activator="parent">
+                <v-card
+                  max-width="500"
+                  class="pa-4 sprite-selection-menu"
+                >
+                  <div
+                    v-for="(_, i) in Object.entries(weaponItemCoordinates)"
+                    :key="i"
+                    class="sprite select"
+                    :style="getSpriteStyleByIdx(i)"
+                    @click="selectItemSprite(i)"
+                  />
+                </v-card>
+              </v-menu>
+            </div>
           </v-col>
-          <v-col cols="6">
-            <v-select
-              v-model="itemStore.formData.tag"
-              disabled
-              density="compact"
-              placeholder="Select tag"
-              hide-details="auto"
-              label="Tag"
-              :items="tagItems"
-            />
+          <v-col cols="10">
+            <v-row>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="itemStore.formData.id"
+                  density="compact"
+                  placeholder="Enter id"
+                  hide-details="auto"
+                  label="ID"
+                />
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="itemStore.formData.name"
+                  density="compact"
+                  placeholder="Enter name"
+                  hide-details="auto"
+                  label="Name"
+                />
+              </v-col>
+              <v-col cols="6">
+                <v-select
+                  v-model="itemStore.formData.rarity"
+                  density="compact"
+                  placeholder="Select rarity"
+                  hide-details="auto"
+                  label="Rarity"
+                  :items="rarityItems"
+                >
+                  <template v-slot:item="{ props: itemProps, item }">
+                    <v-list-item v-bind="itemProps">
+                      <template #prepend>
+                        <v-icon
+                          :style="{
+                            color: ItemRarityData[item.raw.value].color
+                          }"
+                          class="mr-2 rarity-circle"
+                        >
+                          mdi-circle
+                        </v-icon>
+                      </template>
+                    </v-list-item>
+                  </template>
+                  <template v-slot:selection="{ item }">
+                    <div class="d-flex items-center align-center justify-center">
+                      <v-icon
+                        size="15px"
+                        :style="{
+                          color: ItemRarityData[item.raw.value].color
+                        }"
+                        class="mr-2 rarity-circle"
+                      >
+                        mdi-circle
+                      </v-icon>
+                      {{ item.raw.title }}
+                    </div>
+                  </template>
+                </v-select>
+              </v-col>
+              <v-col cols="6">
+                <v-select
+                  v-model="itemStore.formData.tag"
+                  disabled
+                  density="compact"
+                  placeholder="Select tag"
+                  hide-details="auto"
+                  label="Tag"
+                  :items="tagItems"
+                />
+              </v-col>
+            </v-row>
           </v-col>
           <v-col cols="12">
             <v-textarea
@@ -147,57 +177,63 @@
         <div class="text-subtitle-2 mt-4">Stats</div>
         <v-row class="mt-1">
           <v-col cols="2">
+            <span class="text-caption"> MGT </span>
             <v-text-field
-              v-model="itemStore.formData.stats![0]"
+              v-model="itemStore.formData.stats![Stats.MGT]"
               density="compact"
               placeholder="Enter MGT"
               hide-details="auto"
-              label="MGT"
+              :bg-color="StatsData[Stats.MGT].color"
             />
           </v-col>
           <v-col cols="2">
+            <span class="text-caption"> ARM </span>
             <v-text-field
-              v-model="itemStore.formData.stats![1]"
+              v-model="itemStore.formData.stats![Stats.ARM]"
               density="compact"
               placeholder="Enter ARM"
               hide-details="auto"
-              label="ARM"
+              :bg-color="StatsData[Stats.ARM].color"
             />
           </v-col>
           <v-col cols="2">
+            <span class="text-caption"> WIS </span>
             <v-text-field
-              v-model="itemStore.formData.stats![2]"
+              v-model="itemStore.formData.stats![Stats.WIS]"
               density="compact"
               placeholder="Enter WIS"
               hide-details="auto"
-              label="WIS"
+              :bg-color="StatsData[Stats.WIS].color"
             />
           </v-col>
           <v-col cols="2">
+            <span class="text-caption"> STR </span>
             <v-text-field
-              v-model="itemStore.formData.stats![3]"
+              v-model="itemStore.formData.stats![Stats.STR]"
               density="compact"
               placeholder="Enter STR"
               hide-details="auto"
-              label="STR"
+              :bg-color="StatsData[Stats.STR].color"
             />
           </v-col>
           <v-col cols="2">
+            <span class="text-caption"> AGI </span>
             <v-text-field
-              v-model="itemStore.formData.stats![4]"
+              v-model="itemStore.formData.stats![Stats.AGI]"
               density="compact"
               placeholder="Enter AGI"
               hide-details="auto"
-              label="AGI"
+              :bg-color="StatsData[Stats.AGI].color"
             />
           </v-col>
           <v-col cols="2">
+            <span class="text-caption"> SWF </span>
             <v-text-field
-              v-model="itemStore.formData.stats![5]"
+              v-model="itemStore.formData.stats![Stats.SWF]"
               density="compact"
               placeholder="Enter SWF"
               hide-details="auto"
-              label="SWF"
+              :bg-color="StatsData[Stats.SWF].color"
             />
           </v-col>
         </v-row>
@@ -221,7 +257,13 @@
 </template>
 
 <script setup lang="ts">
-import { ItemRarityData, ItemTagName } from "@/constants/game";
+import {
+  ItemRarityData,
+  ItemTagName,
+  Stats,
+  StatsData,
+  weaponItemCoordinates
+} from "@/constants/game";
 import { useItemStore } from "@/store/item";
 
 const itemStore = useItemStore();
@@ -235,11 +277,55 @@ const tagItems = Object.entries(ItemTagName).map((x) => ({
   title: x[1],
   value: Number(x[0])
 }));
+
+const getSpriteStyle = (path?: string) => {
+  if (!path) return {};
+  const id = Number(path.split("_")[1]);
+  const pos = weaponItemCoordinates[id];
+  return {
+    backgroundPosition: `${pos.x}px ${pos.y}px`
+  };
+};
+
+const getSpriteStyleByIdx = (idx: number) => {
+  const pos = weaponItemCoordinates[idx];
+  return {
+    backgroundPosition: `${pos.x}px ${pos.y}px`
+  };
+};
+
+const selectItemSprite = (idx: number) => {
+  itemStore.activeItem!.spritePath = `weapons_${idx}`;
+};
 </script>
 
 <style lang="scss" scoped>
 .rarity-circle {
   border-radius: 100%;
   box-shadow: #00000026 1.95px 1.95px 2.6px;
+}
+
+.sprite {
+  width: 40px;
+  height: 40px;
+  background-image: url("/weapons.png");
+  background-repeat: no-repeat;
+
+  &.select {
+    cursor: pointer;
+  }
+}
+
+.sprite-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }
 </style>

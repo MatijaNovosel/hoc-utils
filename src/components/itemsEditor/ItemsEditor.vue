@@ -72,10 +72,7 @@
         {{ ItemTagName[value] }}
       </template>
       <template #item.stats="{ value }">
-        <div
-          v-if="value.length"
-          class="stat-ctr"
-        >
+        <div class="stat-ctr py-3">
           <div
             class="stat-ctr-item"
             v-for="(stat, i) in value"
@@ -87,7 +84,6 @@
             {{ stat }}
           </div>
         </div>
-        <div v-else>N/A</div>
       </template>
       <template #item.rarity="{ value }">
         <v-icon
@@ -212,12 +208,6 @@ watch(inputFile, async (file) => {
 
     if (Array.isArray(parsed.items)) {
       items.value = parsed.items;
-      if (["Weapons"].includes(activeItemFileName.value)) {
-        items.value = items.value.map((x) => ({
-          ...x,
-          stats: x.stats?.filter((y) => y != 0)
-        }));
-      }
     } else {
       console.error("Invalid JSON format: 'items' array not found");
       items.value = [];

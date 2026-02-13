@@ -50,7 +50,7 @@
       item-key="id"
     >
       <template #item.actions="row">
-        <v-menu>
+        <v-menu min-width="250">
           <template #activator="{ props }">
             <v-btn
               icon="mdi-dots-vertical"
@@ -58,10 +58,15 @@
               v-bind="props"
             />
           </template>
-          <v-list density="compact">
+          <v-list
+            elevation="1"
+            density="compact"
+            min-width="250"
+          >
             <v-list-item @click="itemStore.editItem(row.item)">
               <v-list-item-title> Edit </v-list-item-title>
             </v-list-item>
+            <v-divider />
             <v-list-item>
               <v-list-item-title> Delete </v-list-item-title>
             </v-list-item>

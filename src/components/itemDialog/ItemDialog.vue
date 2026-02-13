@@ -128,50 +128,80 @@
         </v-row>
         <div class="text-subtitle-2 mt-4">Weapon info</div>
         <v-row class="mt-1">
-          <v-col cols="4">
-            <v-text-field
-              v-model="itemStore.formData.minDamage"
-              density="compact"
-              placeholder="Enter min damage"
-              hide-details="auto"
-              label="Min damage"
-            />
+          <v-col
+            cols="2"
+            align="center"
+            class="sprite-selection"
+          >
+            <div
+              v-ripple
+              class="sprite-proj"
+              :style="getSpriteStyleProj(itemStore.activeItem?.projectilePath)"
+            >
+              <v-menu activator="parent">
+                <v-card
+                  max-width="500"
+                  class="pa-4 sprite-selection-menu"
+                >
+                  <div
+                    v-for="(_, i) in Object.entries(projectileCoordinates)"
+                    :key="i"
+                    class="sprite-proj select"
+                    :style="getProjSpriteStyleByIdx(i)"
+                    @click="selectItemProjectileSprite(i)"
+                  />
+                </v-card>
+              </v-menu>
+            </div>
           </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="itemStore.formData.maxDamage"
-              density="compact"
-              placeholder="Enter max damage"
-              hide-details="auto"
-              label="Max damage"
-            />
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="itemStore.formData.projectileScale"
-              density="compact"
-              placeholder="Enter scale"
-              hide-details="auto"
-              label="Projectile scale"
-            />
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="itemStore.formData.range"
-              density="compact"
-              placeholder="Enter range"
-              hide-details="auto"
-              label="Range"
-            />
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="itemStore.formData.projectileDegree"
-              density="compact"
-              placeholder="Enter projectile degree"
-              hide-details="auto"
-              label="Projectile degree"
-            />
+          <v-col cols="10">
+            <v-row>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="itemStore.formData.minDamage"
+                  density="compact"
+                  placeholder="Enter min damage"
+                  hide-details="auto"
+                  label="Min damage"
+                />
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="itemStore.formData.maxDamage"
+                  density="compact"
+                  placeholder="Enter max damage"
+                  hide-details="auto"
+                  label="Max damage"
+                />
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="itemStore.formData.projectileScale"
+                  density="compact"
+                  placeholder="Enter scale"
+                  hide-details="auto"
+                  label="Projectile scale"
+                />
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="itemStore.formData.range"
+                  density="compact"
+                  placeholder="Enter range"
+                  hide-details="auto"
+                  label="Range"
+                />
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="itemStore.formData.projectileDegree"
+                  density="compact"
+                  placeholder="Enter projectile degree"
+                  hide-details="auto"
+                  label="Projectile degree"
+                />
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
         <div class="text-subtitle-2 mt-4">Stats</div>
@@ -260,6 +290,7 @@
 import {
   ItemRarityData,
   ItemTagName,
+  projectileCoordinates,
   Stats,
   StatsData,
   weaponItemCoordinates
@@ -287,6 +318,15 @@ const getSpriteStyle = (path?: string) => {
   };
 };
 
+const getSpriteStyleProj = (path?: string) => {
+  if (!path) return {};
+  const id = Number(path.split("_")[1]);
+  const pos = projectileCoordinates[id];
+  return {
+    backgroundPosition: `${pos.x}px ${pos.y}px`
+  };
+};
+
 const getSpriteStyleByIdx = (idx: number) => {
   const pos = weaponItemCoordinates[idx];
   return {
@@ -294,8 +334,19 @@ const getSpriteStyleByIdx = (idx: number) => {
   };
 };
 
+const getProjSpriteStyleByIdx = (idx: number) => {
+  const pos = projectileCoordinates[idx];
+  return {
+    backgroundPosition: `${pos.x}px ${pos.y}px`
+  };
+};
+
 const selectItemSprite = (idx: number) => {
   itemStore.activeItem!.spritePath = `weapons_${idx}`;
+};
+
+const selectItemProjectileSprite = (idx: number) => {
+  itemStore.activeItem!.projectilePath = `projectilePath_${idx}`;
 };
 </script>
 
@@ -309,6 +360,17 @@ const selectItemSprite = (idx: number) => {
   width: 40px;
   height: 40px;
   background-image: url("/weapons.png");
+  background-repeat: no-repeat;
+
+  &.select {
+    cursor: pointer;
+  }
+}
+
+.sprite-proj {
+  width: 40px;
+  height: 40px;
+  background-image: url("/projectiles.png");
   background-repeat: no-repeat;
 
   &.select {

@@ -29,13 +29,14 @@
         class="tabs-content pt-6"
       >
         <v-tabs-window-item :value="Tabs.Items"> <items-editor /> </v-tabs-window-item>
-        <v-tabs-window-item :value="Tabs.Dialogue"> 2 </v-tabs-window-item>
+        <v-tabs-window-item :value="Tabs.Dialogue"> <dialog-editor /> </v-tabs-window-item>
       </v-tabs-window>
     </div>
   </v-container>
 </template>
 
 <script setup lang="ts">
+import DialogEditor from "@/components/dialogEditor/DialogEditor.vue";
 import ItemsEditor from "@/components/itemsEditor/ItemsEditor.vue";
 import { useAppStore } from "@/store/app";
 import { ref } from "vue";

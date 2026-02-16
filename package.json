@@ -10,6 +10,7 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@vee-validate/rules": "^4.12.6",
+    "@vue-flow/core": "^1.48.2",
     "@vueuse/core": "^10.9.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",

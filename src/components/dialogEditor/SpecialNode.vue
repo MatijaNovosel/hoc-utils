@@ -13,10 +13,16 @@
       {{ data.skill }}
     </div>
     <div
-      v-if="data.rewardId"
-      class="badge reward ml-2"
+      v-if="hasTriggers"
+      class="trigger-ctr"
     >
-      {{ data.rewardId }}
+      <div
+        v-for="(trigger, i) in data.triggers"
+        :key="i"
+        class="badge trigger ml-2"
+      >
+        {{ trigger }}
+      </div>
     </div>
     <Handle
       type="target"
@@ -40,6 +46,10 @@ const nodeClasses = computed(() => ({
   choice: props.data.kind === "choice",
   dead: props.data.deadEnd
 }));
+
+const hasTriggers = computed(
+  () => Array.isArray(props.data.triggers) && props.data.triggers.length > 0
+);
 </script>
 
 <style lang="scss" scoped>
@@ -81,8 +91,12 @@ const nodeClasses = computed(() => ({
   color: white;
 }
 
-.reward {
-  background: #f39c12;
+.trigger {
+  background: #2ecc71;
   color: black;
+}
+
+.ml-2 {
+  margin-left: 8px;
 }
 </style>

@@ -22,6 +22,13 @@ import SpecialEdge from "./SpecialEdge.vue";
 import SpecialNode from "./SpecialNode.vue";
 
 import dialogueData from "./Dialogue.json";
+
+type Trigger = { id: number; value: number };
+type Choice = { id: string; text: string; nextStepId: string | null; triggers?: Trigger[] };
+type Step = { id: string; nextStepId: string | null; text: string; choices: Choice[] };
+type Dialogue = { id: string; npcId: number; startStepId: string; steps: Step[] };
+type DialogueFile = { dialogues: Dialogue[] };
+
 const { fitView } = useVueFlow();
 
 const nodes = ref<Node[]>([]);
@@ -35,7 +42,7 @@ function centerGraph() {
 
 function parseChoiceText(text: string) {
   const skillMatch = text.match(/\[(.*?)\]/);
-  const cleanText = text.replace(/<.*?>/g, "");
+  const cleanText = text.replace(/<[^>]*>/g, "").trim();
 
   return {
     skill: skillMatch ? skillMatch[1] : null,
@@ -44,7 +51,8 @@ function parseChoiceText(text: string) {
 }
 
 function buildGraph() {
-  const dialogue = dialogueData.dialogues[0];
+  const file = dialogueData as unknown as DialogueFile;
+  const dialogue = file.dialogues[0];
   const stepMap = new Map(dialogue.steps.map((s) => [s.id, s]));
 
   nodes.value = [];
@@ -53,34 +61,42 @@ function buildGraph() {
   const levelHeight = 220;
   const siblingWidth = 320;
 
-  const visited = new Set<string>();
+  const visitedSteps = new Set<string>();
 
-  function layoutStep(stepId: string, depth: number, xOffset: number): number {
-    if (!stepMap.has(stepId)) return xOffset;
+  function layoutStep(stepId: string, depth: number, xOffset: number) {
+    const step = stepMap.get(stepId);
+    if (!step) return;
 
-    const step = stepMap.get(stepId)!;
+    const alreadyPlaced = visitedSteps.has(step.id);
+    if (!alreadyPlaced) {
+      const currentX = xOffset;
+      const currentY = depth * levelHeight;
 
-    const currentX = xOffset;
-    const currentY = depth * levelHeight;
+      nodes.value.push({
+        id: step.id,
+        type: "special",
+        position: { x: currentX, y: currentY },
+        data: {
+          label: step.text,
+          kind: "step"
+        }
+      });
 
-    nodes.value.push({
-      id: step.id,
-      type: "special",
-      position: { x: currentX, y: currentY },
-      data: {
-        label: step.text,
-        kind: "step"
-      }
-    });
+      visitedSteps.add(step.id);
+    }
 
-    visited.add(step.id);
+    // @ts-ignore
+    const stepNode = nodes.value.find((n) => n.id === step.id);
+    const stepX = stepNode?.position?.x ?? xOffset;
 
-    let childOffset = currentX - ((step.choices.length - 1) * siblingWidth) / 2;
+    const choices = step.choices ?? [];
+    let childOffset = stepX - ((choices.length - 1) * siblingWidth) / 2;
 
-    step.choices.forEach((choice) => {
+    choices.forEach((choice) => {
       const choiceId = choice.id;
       const choiceY = (depth + 1) * levelHeight;
       const choiceX = childOffset;
+
       const isDeadEnd = !choice.nextStepId;
       const parsed = parseChoiceText(choice.text);
 
@@ -92,7 +108,7 @@ function buildGraph() {
           label: parsed.cleanText,
           kind: "choice",
           skill: parsed.skill,
-          rewardId: choice.rewardId,
+          triggers: choice.triggers ?? [],
           deadEnd: isDeadEnd
         }
       });
@@ -121,8 +137,6 @@ function buildGraph() {
 
       childOffset += siblingWidth;
     });
-
-    return currentX;
   }
 
   nodes.value.push({

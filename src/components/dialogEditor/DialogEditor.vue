@@ -3,6 +3,7 @@
     <vue-flow
       :nodes="nodes"
       :edges="edges"
+      :default-edge-options="{ type: 'straight' }"
     >
       <template #node-special="specialNodeProps">
         <special-node v-bind="specialNodeProps" />

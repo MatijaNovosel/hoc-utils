@@ -7,12 +7,6 @@
       {{ data.label }}
     </div>
     <div
-      v-if="data.skill"
-      class="badge skill"
-    >
-      {{ data.skill }}
-    </div>
-    <div
       v-if="hasTriggers"
       class="trigger-ctr"
     >
@@ -23,6 +17,41 @@
       >
         {{ trigger }}
       </div>
+    </div>
+    <div
+      v-if="Array.isArray(data.conditions) && data.conditions.length"
+      class="cond-ctr"
+    >
+      <div
+        v-for="(c, i) in data.conditions"
+        :key="i"
+        class="badge condition"
+      >
+        {{ formatCondition(c) }}
+      </div>
+    </div>
+    <div class="actions nodrag nopan">
+      <button
+        v-if="data.kind === 'step'"
+        class="btn"
+        @click.stop="data.onAddChoice?.()"
+      >
+        + Choice
+      </button>
+      <button
+        v-if="data.kind === 'choice' && !data.nextStepId"
+        class="btn"
+        @click.stop="data.onAddNextStep?.()"
+      >
+        + Success Step
+      </button>
+      <button
+        v-if="data.kind === 'choice' && !data.onFailStepId"
+        class="btn"
+        @click.stop="data.onAddFailStep?.()"
+      >
+        + Fail Step
+      </button>
     </div>
     <Handle
       type="target"
@@ -41,10 +70,19 @@ import { computed } from "vue";
 
 const props = defineProps<NodeProps>();
 
+const formatCondition = (c: any) => {
+  if (!c) return "";
+  if (c.type === "stat") return `${c.stat} ${c.op} ${c.value}`;
+  if (c.type === "flag") return `${c.key} ${c.op} ${String(c.value)}`;
+  return "condition";
+};
+
 const nodeClasses = computed(() => ({
   step: props.data.kind === "step",
   choice: props.data.kind === "choice",
-  dead: props.data.deadEnd
+  branch: props.data.kind === "branch",
+  dead: props.data.deadEnd,
+  failStep: props.data.failStep === true
 }));
 
 const hasTriggers = computed(
@@ -78,6 +116,12 @@ const hasTriggers = computed(
   background: white;
 }
 
+.failStep {
+  background: #e74c3c;
+  border: 2px solid #c0392b;
+  color: white;
+}
+
 .badge {
   margin-top: 8px;
   padding: 4px 8px;
@@ -96,7 +140,41 @@ const hasTriggers = computed(
   color: black;
 }
 
-.ml-2 {
-  margin-left: 8px;
+.actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.step .btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.choice .btn {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.cond-ctr {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.condition {
+  background: #f1c40f;
+  color: black;
 }
 </style>

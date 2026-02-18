@@ -15,7 +15,7 @@
         :key="i"
         class="badge trigger ml-2"
       >
-        {{ trigger }}
+        {{ formatTrigger(trigger) }}
       </div>
     </div>
     <div
@@ -65,6 +65,8 @@
 </template>
 
 <script setup lang="ts">
+import { Stats } from "@/constants/game";
+import { Trigger } from "@/models/dialog";
 import { Handle, Position, type NodeProps } from "@vue-flow/core";
 import { computed } from "vue";
 
@@ -72,7 +74,9 @@ const props = defineProps<NodeProps>();
 
 const formatCondition = (c: any) => {
   if (!c) return "";
-  if (c.type === "stat") return `${c.stat} ${c.op} ${c.value}`;
+  if (c.type === "stat") {
+    return `${Object.entries(Stats)[c.stat][0]} ${c.op} ${c.value}`;
+  }
   if (c.type === "flag") return `${c.key} ${c.op} ${String(c.value)}`;
   return "condition";
 };
@@ -88,6 +92,17 @@ const nodeClasses = computed(() => ({
 const hasTriggers = computed(
   () => Array.isArray(props.data.triggers) && props.data.triggers.length > 0
 );
+
+const formatTrigger = (trigger: Trigger) => {
+  switch (trigger.type) {
+    case "giveItem": {
+      return `${trigger.type} - ${trigger.value}`;
+    }
+    case "setFlag": {
+      return `${trigger.type} [${trigger.key}] -> ${trigger.value}`;
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

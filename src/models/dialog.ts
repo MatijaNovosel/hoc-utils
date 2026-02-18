@@ -1,7 +1,7 @@
 export type Op = "==" | "!=" | ">=" | "<=" | ">" | "<";
 
 export type Condition =
-  | { type: "stat"; stat: string; op: Op; value: number }
+  | { type: "stat"; stat: number; op: Op; value: number }
   | { type: "flag"; key: string; op: Op; value: boolean | number | string };
 
 export type Trigger =
@@ -24,7 +24,7 @@ export interface Step {
   choices: Choice[];
 }
 
-export interface StartBranch {
+export interface StartPoint {
   conditions: Condition[];
   startStepId: string;
 }
@@ -33,7 +33,7 @@ export interface Dialogue {
   id: string;
   npcId: number;
   startStepId: string;
-  startBranches?: StartBranch[];
+  startPoint?: StartPoint[];
   steps: Step[];
 }
 

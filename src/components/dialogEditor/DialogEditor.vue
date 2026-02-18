@@ -233,7 +233,7 @@ function buildGraph(firstIteration?: boolean) {
     type: "special"
   });
 
-  (dialogue.startBranches ?? []).forEach((b, i) => {
+  (dialogue.startPoint ?? []).forEach((b, i) => {
     const branchId = `START_BRANCH_${i + 1}`;
 
     nodes.value.push({

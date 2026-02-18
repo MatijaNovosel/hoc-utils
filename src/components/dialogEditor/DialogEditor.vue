@@ -1,5 +1,13 @@
 <template>
   <div class="dialog-editor">
+    <v-btn
+      class="fit-btn text-white"
+      color="orange"
+      rounded="6"
+      @click="centerGraph"
+    >
+      Fit into view
+    </v-btn>
     <vue-flow
       :nodes="nodes"
       :edges="edges"
@@ -32,6 +40,40 @@ const edges = ref<Edge[]>([]);
 
 const dialogueFile = ref<DialogueFile>(structuredClone(dialogueData as unknown as DialogueFile));
 
+function updateStepText(stepId: string, text: string) {
+  const dialogue = getDialogue();
+  const step = dialogue.steps.find((s) => s.id === stepId);
+  if (!step) return;
+
+  step.text = text;
+
+  // @ts-ignore
+  const n = nodes.value.find((x) => x.id === stepId);
+  if (n) n.data = { ...(n.data ?? {}), label: text };
+}
+
+function updateChoiceText(choiceId: string, text: string) {
+  const dialogue = getDialogue();
+
+  const parentStep = dialogue.steps.find((s) => (s.choices ?? []).some((c) => c.id === choiceId));
+  if (!parentStep) return;
+
+  const choice = (parentStep.choices ?? []).find((c) => c.id === choiceId);
+  if (!choice) return;
+
+  choice.text = text;
+
+  const parsed = parseChoiceText(text);
+  const n = nodes.value.find((x) => x.id === choiceId);
+  if (n) {
+    n.data = {
+      ...(n.data ?? {}),
+      label: parsed.cleanText,
+      rawText: text
+    };
+  }
+}
+
 function addFailStepFromChoice(choiceId: string) {
   const dialogue = getDialogue();
 
@@ -62,7 +104,7 @@ function centerGraph() {
     fitView({
       padding: 100,
       maxZoom: 1,
-      minZoom: 0.6
+      minZoom: 0.5
     });
   }, 80);
 }
@@ -71,7 +113,7 @@ function nodeHeight(n: Node) {
   const kind = n.data?.kind;
   if (kind === "branch") return 120;
 
-  let h = kind === "choice" ? 170 : 190;
+  let h = kind === "choice" ? 240 : 260;
 
   const condCount = Array.isArray(n.data?.conditions) ? n.data.conditions.length : 0;
   const trigCount = Array.isArray(n.data?.triggers) ? n.data.triggers.length : 0;
@@ -84,8 +126,8 @@ function nodeHeight(n: Node) {
 }
 
 function nodeWidth(n: Node) {
-  if (n.data?.kind === "branch") return 320;
-  return 280;
+  if (n.data?.kind === "branch") return 280;
+  return 380;
 }
 
 function parseChoiceText(text: string) {
@@ -278,9 +320,11 @@ function buildGraph(firstIteration?: boolean) {
       position: { x: 0, y: 0 },
       data: {
         label: step.text,
+        rawText: step.text,
         kind: "step",
         failStep: failTargetStepIds.has(step.id),
-        onAddChoice: () => addChoice(step.id)
+        onAddChoice: () => addChoice(step.id),
+        onUpdateLabel: (val: string) => updateStepText(step.id, val)
       }
     });
 
@@ -293,6 +337,7 @@ function buildGraph(firstIteration?: boolean) {
         position: { x: 0, y: 0 },
         data: {
           label: parsed.cleanText,
+          rawText: choice.text,
           kind: "choice",
           conditions: choice.conditions ?? [],
           triggers: choice.triggers ?? [],
@@ -300,7 +345,8 @@ function buildGraph(firstIteration?: boolean) {
           onFailStepId: choice.onFailStepId ?? null,
           deadEnd: !choice.nextStepId && !choice.onFailStepId,
           onAddNextStep: () => addNextStepFromChoice(choice.id),
-          onAddFailStep: () => addFailStepFromChoice(choice.id)
+          onAddFailStep: () => addFailStepFromChoice(choice.id),
+          onUpdateLabel: (val: string) => updateChoiceText(choice.id, val)
         }
       });
 
@@ -356,5 +402,11 @@ onMounted(() => buildGraph(true));
 .dialog-editor {
   width: 100vw;
   height: calc(100vh - 157px);
+}
+
+.fit-btn {
+  position: absolute;
+  right: 15px;
+  z-index: 9999;
 }
 </style>

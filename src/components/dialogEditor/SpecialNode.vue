@@ -3,7 +3,23 @@
     class="node"
     :class="nodeClasses"
   >
-    <div class="text">
+    <div
+      class="nodrag nopan"
+      v-if="isEditable"
+    >
+      <v-textarea
+        v-model="editValue"
+        density="compact"
+        variant="outlined"
+        auto-grow
+        hide-details
+        @update:modelValue="onEdit"
+      />
+    </div>
+    <div
+      v-else
+      class="text"
+    >
       {{ data.label }}
     </div>
     <div
@@ -68,9 +84,24 @@
 import { Stats } from "@/constants/game";
 import { Trigger } from "@/models/dialog";
 import { Handle, Position, type NodeProps } from "@vue-flow/core";
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 
 const props = defineProps<NodeProps>();
+
+const isEditable = computed(() => props.data.kind === "step" || props.data.kind === "choice");
+
+const editValue = ref<string>(String(props.data.rawText ?? props.data.label ?? ""));
+
+watch(
+  () => props.data.rawText ?? props.data.label,
+  (v) => {
+    editValue.value = String(v ?? "");
+  }
+);
+
+function onEdit(val: string) {
+  props.data.onUpdateLabel?.(val);
+}
 
 const formatCondition = (c: any) => {
   if (!c) return "";
@@ -95,19 +126,17 @@ const hasTriggers = computed(
 
 const formatTrigger = (trigger: Trigger) => {
   switch (trigger.type) {
-    case "giveItem": {
+    case "giveItem":
       return `${trigger.type} - ${trigger.value}`;
-    }
-    case "setFlag": {
+    case "setFlag":
       return `${trigger.type} [${trigger.key}] -> ${trigger.value}`;
-    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
 .node {
-  width: 280px;
+  width: 380px;
   padding: 16px;
   border-radius: 12px;
   text-align: center;
@@ -191,5 +220,9 @@ const formatTrigger = (trigger: Trigger) => {
 .condition {
   background: #f1c40f;
   color: black;
+}
+
+.node :deep(.v-field) {
+  font-size: 14px;
 }
 </style>

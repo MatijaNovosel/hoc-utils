@@ -127,7 +127,8 @@ const hasTriggers = computed(
 const formatTrigger = (trigger: Trigger) => {
   switch (trigger.type) {
     case "giveItem":
-      return `${trigger.type} - ${trigger.value}`;
+    case "giveXp":
+      return `${trigger.type} ${trigger.value}`;
     case "setFlag":
       return `${trigger.type} [${trigger.key}] -> ${trigger.value}`;
   }

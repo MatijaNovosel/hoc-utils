@@ -6,6 +6,7 @@ export type Condition =
 
 export type Trigger =
   | { type: "giveItem"; value: number }
+  | { type: "giveXp"; value: number }
   | { type: "setFlag"; key: string; value: boolean | number | string };
 
 export interface Choice {

@@ -46,7 +46,10 @@
         {{ formatCondition(c) }}
       </div>
     </div>
-    <div class="actions nodrag nopan">
+    <div
+      v-if="isEditable"
+      class="actions nodrag nopan"
+    >
       <button
         v-if="data.kind === 'step'"
         class="btn"

@@ -126,7 +126,7 @@
             />
           </v-col>
         </v-row>
-        <template v-if="itemType === 'weapon'">
+        <template v-if="itemType === 'weapons'">
           <div class="text-subtitle-2 mt-4">Weapon info</div>
           <v-row class="mt-1">
             <v-col
@@ -300,6 +300,7 @@
 <script setup lang="ts">
 import {
   accessoryItemCoordinates,
+  armorItemCoordinates,
   ItemRarityData,
   ItemTagName,
   projectileCoordinates,
@@ -313,8 +314,7 @@ import { computed } from "vue";
 const itemStore = useItemStore();
 
 const itemType = computed(() => {
-  if (itemStore.activeItem) return ItemTagName[itemStore.activeItem.tag].toLowerCase();
-  return "weapon";
+  return itemStore.activeItemFileName.toLowerCase();
 });
 
 const rarityItems = Object.entries(ItemRarityData).map((x) => ({
@@ -331,10 +331,12 @@ const activeCoordinates = computed(() => {
   let coordinates = weaponItemCoordinates;
 
   switch (itemType.value) {
-    case "weapon":
+    case "weapons":
       return weaponItemCoordinates;
-    case "accessory":
+    case "accessories":
       return accessoryItemCoordinates;
+    case "armor":
+      return armorItemCoordinates;
   }
 
   return coordinates;
@@ -347,17 +349,8 @@ const getSpriteStyle = (path?: string) => {
 
   if (!pos) return {};
 
-  let bgUrl = "weapons";
-
-  switch (itemType.value) {
-    case "weapon":
-      bgUrl = "weapons";
-    case "accessory":
-      bgUrl = "accessories";
-  }
-
   return {
-    backgroundImage: `url("/${bgUrl}.png")`,
+    backgroundImage: `url("/${itemType.value}.png")`,
     backgroundPosition: `${pos.x}px ${pos.y}px`
   };
 };
@@ -374,17 +367,8 @@ const getSpriteStyleProj = (path?: string) => {
 const getSpriteStyleByIdx = (idx: number) => {
   const pos = activeCoordinates.value[idx];
 
-  let bgUrl = "weapons";
-
-  switch (itemType.value) {
-    case "weapon":
-      bgUrl = "weapons";
-    case "accessory":
-      bgUrl = "accessories";
-  }
-
   return {
-    backgroundImage: `url("/${bgUrl}.png")`,
+    backgroundImage: `url("/${itemType.value}.png")`,
     backgroundPosition: `${pos.x}px ${pos.y}px`
   };
 };

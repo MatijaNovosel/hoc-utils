@@ -9,20 +9,9 @@
       class="w-100"
       v-model="inputFile"
     />
-    <v-text-field
-      density="compact"
-      label="Output file name"
-      prepend-icon="mdi-folder"
-      bg-color="grey-lighten-4"
-      class="w-100"
-      hide-details
-      v-model="outputPath"
-      @click="selectOutputPath"
-      readonly
-    />
     <div class="my-3 d-flex items-center align-center justify-space-between w-100">
       <div>
-        {{ activeItemFileName }}
+        {{ itemStore.activeItemFileName }}
       </div>
       <div>
         <v-btn
@@ -43,8 +32,7 @@
       </div>
     </div>
     <v-data-table
-      v-if="items.length"
-      class="item-table"
+      class="item-table mt-5"
       :headers="headers"
       :items="items"
       :items-per-page="50"
@@ -125,12 +113,6 @@
         />
       </template>
     </v-data-table>
-    <h3
-      v-else
-      class="mx-auto mt-5"
-    >
-      Select an item JSON to get started!
-    </h3>
   </div>
 </template>
 
@@ -150,10 +132,7 @@ import { computed, ref, watch } from "vue";
 const itemStore = useItemStore();
 
 const inputFile = ref<File | null>(null);
-const outputPath = ref("");
 const items = ref<ItemModel[]>([]);
-
-const activeItemFileName = ref("");
 
 const baseHeaders = [
   { title: "ID", align: "start", key: "id" },
@@ -165,7 +144,7 @@ const baseHeaders = [
 const headers: any = computed(() => {
   let headers = [...baseHeaders];
 
-  if (["Weapons"].includes(activeItemFileName.value)) {
+  if (["Weapons"].includes(itemStore.activeItemFileName)) {
     headers.push(
       { title: "Proj spr", align: "center", key: "projectilePath" },
       { title: "Rarity", align: "center", key: "rarity" },
@@ -179,7 +158,7 @@ const headers: any = computed(() => {
     );
   }
 
-  if (["Accessories"].includes(activeItemFileName.value)) {
+  if (["Accessories", "Armor"].includes(itemStore.activeItemFileName)) {
     headers.push(
       { title: "Rarity", align: "center", key: "rarity" },
       { title: "Stats", align: "start", key: "stats" }
@@ -189,18 +168,14 @@ const headers: any = computed(() => {
   return [...headers, { title: "Actions", align: "center", key: "actions" }];
 });
 
-const selectOutputPath = async () => {
-  //
-};
-
 const buttonShouldBeDisabled = computed(() => {
-  return !inputFile.value || !outputPath.value;
+  return !inputFile.value;
 });
 
 const activeCoordinates = computed(() => {
   let coordinates = weaponItemCoordinates;
 
-  switch (activeItemFileName.value.toLowerCase()) {
+  switch (itemStore.activeItemFileName.toLowerCase()) {
     case "weapons":
       return weaponItemCoordinates;
     case "accessories":
@@ -217,7 +192,7 @@ const getSpriteStyle = (path: string) => {
   if (!pos) return {};
 
   return {
-    backgroundImage: `url("/${activeItemFileName.value.toLowerCase()}.png")`,
+    backgroundImage: `url("/${itemStore.activeItemFileName.toLowerCase()}.png")`,
     backgroundPosition: `${pos.x}px ${pos.y}px`
   };
 };
@@ -235,7 +210,7 @@ watch(inputFile, async (file) => {
   if (!file) return;
 
   try {
-    activeItemFileName.value = file.name.split(".")[0];
+    itemStore.activeItemFileName = file.name.split(".")[0];
     const text = await file.text();
     const parsed = JSON.parse(text);
 

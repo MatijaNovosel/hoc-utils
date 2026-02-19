@@ -58,4 +58,6 @@ export const weaponItemCoordinates = generateSpriteCoordinates([3, 6, 4, 3, 4, 4
 
 export const accessoryItemCoordinates = generateSpriteCoordinates([8, 8, 8, 8, 3, 6, 2, 2]);
 
+export const armorItemCoordinates = generateSpriteCoordinates([5, 2, 5]);
+
 export const projectileCoordinates = generateSpriteCoordinates([8, 8, 8, 3, 3]);

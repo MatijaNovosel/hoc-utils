@@ -47,6 +47,7 @@
       class="item-table"
       :headers="headers"
       :items="items"
+      :items-per-page="50"
       item-key="id"
     >
       <template #item.actions="row">
@@ -112,6 +113,7 @@
       </template>
       <template #item.spritePath="{ value }">
         <div
+          v-if="value"
           class="sprite"
           :style="getSpriteStyle(value)"
         />
@@ -134,6 +136,7 @@
 
 <script lang="ts" setup>
 import {
+  accessoryItemCoordinates,
   ItemRarityData,
   ItemTagName,
   projectileCoordinates,
@@ -176,6 +179,13 @@ const headers: any = computed(() => {
     );
   }
 
+  if (["Accessories"].includes(activeItemFileName.value)) {
+    headers.push(
+      { title: "Rarity", align: "center", key: "rarity" },
+      { title: "Stats", align: "start", key: "stats" }
+    );
+  }
+
   return [...headers, { title: "Actions", align: "center", key: "actions" }];
 });
 
@@ -187,15 +197,33 @@ const buttonShouldBeDisabled = computed(() => {
   return !inputFile.value || !outputPath.value;
 });
 
+const activeCoordinates = computed(() => {
+  let coordinates = weaponItemCoordinates;
+
+  switch (activeItemFileName.value.toLowerCase()) {
+    case "weapons":
+      return weaponItemCoordinates;
+    case "accessories":
+      return accessoryItemCoordinates;
+  }
+
+  return coordinates;
+});
+
 const getSpriteStyle = (path: string) => {
   const id = Number(path.split("_")[1]);
-  const pos = weaponItemCoordinates[id];
+  const pos = activeCoordinates.value[id];
+
+  if (!pos) return {};
+
   return {
+    backgroundImage: `url("/${activeItemFileName.value.toLowerCase()}.png")`,
     backgroundPosition: `${pos.x}px ${pos.y}px`
   };
 };
 
-const getProjectileSpriteStyle = (path: string) => {
+const getProjectileSpriteStyle = (path?: string) => {
+  if (!path) return {};
   const id = Number(path.split("_")[1]);
   const pos = projectileCoordinates[id];
   return {
@@ -237,7 +265,6 @@ watch(inputFile, async (file) => {
 .sprite {
   width: 40px;
   height: 40px;
-  background-image: url("/weapons.png");
   background-repeat: no-repeat;
 }
 

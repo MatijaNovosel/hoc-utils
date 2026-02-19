@@ -22,6 +22,7 @@
       :nodes="nodes"
       :edges="edges"
       :default-edge-options="{ type: 'straight' }"
+      :nodes-draggable="false"
     >
       <template #node-special="specialNodeProps">
         <special-node v-bind="specialNodeProps" />
@@ -96,9 +97,7 @@ function addFailStepFromChoice(choiceId: string) {
   if (!parentStep) return;
 
   const choice = (parentStep.choices ?? []).find((c) => c.id === choiceId);
-  if (!choice) return;
-
-  if (choice.onFailStepId) return;
+  if (!choice || choice.onFailStepId) return;
 
   const newStepId = nextStepId(dialogue.id);
 
@@ -208,9 +207,7 @@ function addNextStepFromChoice(choiceId: string) {
   if (!parentStep) return;
 
   const choice = (parentStep.choices ?? []).find((c) => c.id === choiceId);
-
-  if (!choice) return;
-  if (choice.nextStepId) return;
+  if (!choice || choice.nextStepId) return;
 
   const dialogueId = dialogue.id;
   const newStepId = nextStepId(dialogueId);
@@ -407,9 +404,7 @@ function buildGraph(firstIteration?: boolean) {
   }
 
   applyDagreLayout("TB");
-  if (firstIteration) {
-    centerGraph();
-  }
+  if (firstIteration) centerGraph();
 }
 
 watch(isEditMode, () => {

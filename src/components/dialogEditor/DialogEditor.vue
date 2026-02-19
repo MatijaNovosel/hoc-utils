@@ -1,13 +1,23 @@
 <template>
   <div class="dialog-editor">
-    <v-btn
-      class="fit-btn text-white"
-      color="orange"
-      rounded="6"
-      @click="centerGraph"
-    >
-      Fit into view
-    </v-btn>
+    <div class="top-left-ctr">
+      <v-btn
+        class="text-white"
+        color="orange"
+        rounded="6"
+        @click="centerGraph"
+      >
+        Fit into view
+      </v-btn>
+      <v-btn
+        class="text-white"
+        :color="isEditMode ? 'green' : 'blue'"
+        rounded="6"
+        @click="startEdit"
+      >
+        {{ isEditMode ? "Save" : "Edit" }}
+      </v-btn>
+    </div>
     <vue-flow
       :nodes="nodes"
       :edges="edges"
@@ -26,7 +36,7 @@
 <script lang="ts" setup>
 import { Edge, Node, useVueFlow, VueFlow } from "@vue-flow/core";
 import dagre from "dagre";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import SpecialEdge from "./SpecialEdge.vue";
 import SpecialNode from "./SpecialNode.vue";
 
@@ -37,6 +47,7 @@ const { fitView } = useVueFlow();
 
 const nodes = ref<Node[]>([]);
 const edges = ref<Edge[]>([]);
+const isEditMode = ref(false);
 
 const dialogueFile = ref<DialogueFile>(structuredClone(dialogueData as unknown as DialogueFile));
 
@@ -50,6 +61,10 @@ function updateStepText(stepId: string, text: string) {
   // @ts-ignore
   const n = nodes.value.find((x) => x.id === stepId);
   if (n) n.data = { ...(n.data ?? {}), label: text };
+}
+
+function startEdit() {
+  isEditMode.value = !isEditMode.value;
 }
 
 function updateChoiceText(choiceId: string, text: string) {
@@ -322,6 +337,7 @@ function buildGraph(firstIteration?: boolean) {
         label: step.text,
         rawText: step.text,
         kind: "step",
+        isEditMode: isEditMode.value,
         failStep: failTargetStepIds.has(step.id),
         onAddChoice: () => addChoice(step.id),
         onUpdateLabel: (val: string) => updateStepText(step.id, val)
@@ -339,6 +355,7 @@ function buildGraph(firstIteration?: boolean) {
           label: parsed.cleanText,
           rawText: choice.text,
           kind: "choice",
+          isEditMode: isEditMode.value,
           conditions: choice.conditions ?? [],
           triggers: choice.triggers ?? [],
           nextStepId: choice.nextStepId ?? null,
@@ -395,6 +412,10 @@ function buildGraph(firstIteration?: boolean) {
   }
 }
 
+watch(isEditMode, () => {
+  buildGraph();
+});
+
 onMounted(() => buildGraph(true));
 </script>
 
@@ -404,9 +425,11 @@ onMounted(() => buildGraph(true));
   height: calc(100vh - 157px);
 }
 
-.fit-btn {
+.top-left-ctr {
   position: absolute;
   right: 15px;
   z-index: 9999;
+  display: flex;
+  gap: 10px;
 }
 </style>

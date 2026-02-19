@@ -88,7 +88,9 @@ import { computed, ref, watch } from "vue";
 
 const props = defineProps<NodeProps>();
 
-const isEditable = computed(() => props.data.kind === "step" || props.data.kind === "choice");
+const isEditable = computed(
+  () => props.data.isEditMode && (props.data.kind === "step" || props.data.kind === "choice")
+);
 
 const editValue = ref<string>(String(props.data.rawText ?? props.data.label ?? ""));
 

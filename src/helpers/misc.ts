@@ -46,3 +46,20 @@ export function generateSpriteCoordinates(
 
   return coordinates;
 }
+
+type Op = "==" | "!=" | ">=" | "<=" | ">" | "<";
+
+export type Condition =
+  | { type: "flag"; key: string; op: Op; value: any }
+  | { type: "stat"; stat: number; op: Op; value: number };
+
+export function formatCondition(c: Condition): string {
+  if (c.type === "flag") return `FLAG ${c.key} ${c.op} ${String(c.value)}`;
+  if (c.type === "stat") return `STAT[${c.stat}] ${c.op} ${c.value}`;
+  return "UNKNOWN";
+}
+
+export function formatConditions(conds?: Condition[] | null): string {
+  if (!conds || conds.length === 0) return "";
+  return conds.map(formatCondition).join(" AND ");
+}

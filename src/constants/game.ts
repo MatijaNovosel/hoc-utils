@@ -27,6 +27,34 @@ export const Stats = {
   SWF: 5
 };
 
+export const StatusEffects = {
+  Energized: 1,
+  Slowed: 2,
+  Silenced: 3,
+  Damaging: 4,
+  ArmorBroken: 5,
+  Healing: 6,
+  Poisoned: 7,
+  Bleeding: 8,
+  Armored: 9,
+  Invincible: 10,
+  Weak: 11,
+  Stunned: 12,
+  Berserk: 13,
+  Paralyzed: 14,
+  Burning: 15,
+  Radiance: 16,
+  Sick: 17,
+  Frostbite: 18
+};
+
+export const StatusEffectData: Record<number, { name: string }> = Object.fromEntries(
+  Object.entries(StatusEffects).map(([key, value]) => [
+    value,
+    { name: key.replace(/([A-Z])/g, " $1").trim() }
+  ])
+);
+
 export const ItemTagName = {
   [ItemTagEnum.None]: "None",
   [ItemTagEnum.Weapon]: "Weapon",

@@ -354,6 +354,7 @@ function buildGraph(firstIteration?: boolean) {
           kind: "choice",
           isEditMode: isEditMode.value,
           conditions: choice.conditions ?? [],
+          showIf: choice.showIf ?? [],
           triggers: choice.triggers ?? [],
           nextStepId: choice.nextStepId ?? null,
           onFailStepId: choice.onFailStepId ?? null,

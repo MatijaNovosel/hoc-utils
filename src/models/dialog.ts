@@ -7,6 +7,7 @@ export type Condition =
 export type Trigger =
   | { type: "giveItem"; value: number }
   | { type: "giveXp"; value: number }
+  | { type: "applyStatusEffect"; value: number }
   | { type: "setFlag"; key: string; value: boolean | number | string };
 
 export interface Choice {
@@ -15,6 +16,7 @@ export interface Choice {
   nextStepId: string | null;
   onFailStepId?: string | null;
   conditions?: Condition[];
+  showIf?: Condition[];
   triggers?: Trigger[];
 }
 

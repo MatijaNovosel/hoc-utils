@@ -35,6 +35,18 @@
       </div>
     </div>
     <div
+      v-if="Array.isArray(data.showIf) && data.showIf.length"
+      class="showif-ctr"
+    >
+      <div
+        v-for="(c, i) in data.showIf"
+        :key="i"
+        class="badge showif"
+      >
+        {{ formatShowIf(c) }}
+      </div>
+    </div>
+    <div
       v-if="Array.isArray(data.conditions) && data.conditions.length"
       class="cond-ctr"
     >
@@ -84,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { Stats } from "@/constants/game";
+import { Stats, StatusEffectData } from "@/constants/game";
 import { Trigger } from "@/models/dialog";
 import { Handle, Position, type NodeProps } from "@vue-flow/core";
 import { computed, ref, watch } from "vue";
@@ -117,6 +129,11 @@ const formatCondition = (c: any) => {
   return "condition";
 };
 
+const formatShowIf = (c: any) => {
+  const base = formatCondition(c);
+  return `SHOWIF: ${base}`;
+};
+
 const nodeClasses = computed(() => ({
   step: props.data.kind === "step",
   choice: props.data.kind === "choice",
@@ -134,6 +151,8 @@ const formatTrigger = (trigger: Trigger) => {
     case "giveItem":
     case "giveXp":
       return `${trigger.type} ${trigger.value}`;
+    case "applyStatusEffect":
+      return `${trigger.type} ${StatusEffectData[trigger.value].name}`;
     case "setFlag":
       return `${trigger.type} [${trigger.key}] -> ${trigger.value}`;
   }
@@ -226,6 +245,20 @@ const formatTrigger = (trigger: Trigger) => {
 .condition {
   background: #f1c40f;
   color: black;
+}
+
+/* SHOWIF badges */
+.showif-ctr {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.showif {
+  background: #3498db;
+  color: white;
 }
 
 .node :deep(.v-field) {
